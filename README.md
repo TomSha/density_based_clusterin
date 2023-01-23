@@ -1,0 +1,1 @@
+This repository contains an R implementation of the density based clustering algorithm found in Rodriguez and Laio (2014) [Clustering by fast search and find of density peaks](https://www.science.org/doi/pdf/10.1126/science.1242072)
