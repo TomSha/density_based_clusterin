@@ -1,4 +1,3 @@
-
 library(mlbench)
 
 
@@ -148,15 +147,16 @@ calculate_outliers <- function(dat, euc_dist, knn, clusters, dens){
 
 	# find the maximum density outlier for each cluster and use this density as a minimum density threshold
 	n_cl <- max(clusters)
-	min_dens <- rep(0, n_cl)
+	min_dens <- rep(NA, n_cl)
 
 	for(i in 1 : n_cl){
 		cl_outliers <- !NN_thresh & clusters == i
 
-		if(sum(cl_outliers == 0)){
+		if(sum(cl_outliers) == 0){
 			min_dens[i] <- 0
 		}else{
 			min_dens[i] <- max(dens[cl_outliers])
+		}
 	}
 	dens_thresh <- dens > min_dens[clusters]
 
@@ -164,7 +164,6 @@ calculate_outliers <- function(dat, euc_dist, knn, clusters, dens){
 	return(outlier_thresh)
 
 	}
-}
 ############################################################################
 
 
