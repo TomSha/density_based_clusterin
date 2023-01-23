@@ -1,9 +1,9 @@
-library(mlbench)
-
-
-dat <- mlbench.2dnormals(n = 3000, cl = 3, r = 3, sd = 1)
-cl_id <- dat$classes
-dat <- dat$x
+#library(mlbench)
+#
+#
+#dat <- mlbench.2dnormals(n = 3000, cl = 3, r = 3, sd = 1)
+#cl_id <- dat$classes
+#dat <- dat$x
 
 
 ############################################################################
