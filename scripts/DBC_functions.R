@@ -1,10 +1,3 @@
-#library(mlbench)
-#
-#
-#dat <- mlbench.2dnormals(n = 3000, cl = 3, r = 3, sd = 1)
-#cl_id <- dat$classes
-#dat <- dat$x
-
 
 ############################################################################
 # calculates euclidean distance between rows of a data matrix
@@ -40,8 +33,7 @@ calculate_density <- function(euc_dist, KNN){
 
 	# find the local density for each point
 	dens <- 1 / kNN_dist ^ ncol(dat)
-	returnList <- list(dens = dens, kNN_dist = kNN_dist)
-	return(returnList)
+	return(dens)
 }
 ###########################################################################
 	
