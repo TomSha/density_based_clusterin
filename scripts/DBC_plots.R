@@ -1,11 +1,11 @@
 source("colourscale.R")
 
-plot_dp <- function(dens, dis){
+plot_dp <- function(dens, dis, threshold = 0, Dim = 2){
 	plot(log(dis), log(dens), pch = 19, cex = 0.5)
 
 	logdist<-seq(from = min(log(dis)), to = range(dis,finite=T)[2], length.out=100);
 
-	lines(logdist,-2*logdist ,lty=2,col="black")	
+	lines(logdist,-Dim * logdist + threshold,lty=2,col="black")	
 }
 
 plot_dat <- function(dat, cl = NULL, outliers = NULL){
@@ -14,7 +14,7 @@ plot_dat <- function(dat, cl = NULL, outliers = NULL){
 		cols <- "black"
 	}else{
 		n_cl <- max(cl)
-		cols <- rainbow(n_cl)[cl]
+		cols <- viridis(n = n_cl)[cl]
 	}
 
 	if(is.null(outliers)){
