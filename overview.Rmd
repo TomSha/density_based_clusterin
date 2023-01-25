@@ -49,9 +49,8 @@ First we load the data and plot it.
 
 ```{r}
 source("scripts/DBC_functions.R")
-source("scripts/colourscale.R")
 dat <- read.table("data/data.dat")
-plot(dat, ann = F, xaxt = "n", yaxt = "n", pch = 19, cex = 0.4)
+plot_dat(dat)
 ```
 
 We can see that the data appears to come from 3 clusters. Our aim is to associate each data point to one of the 3 clusters.
@@ -63,25 +62,68 @@ euc_dist <- as.matrix(dist(dat, upper = T))
 ```
 
 
-Next we can calculate the local density of the data. Here we need to choose our parameter, $k$, which defines which nearest neighbour is used to calculate the density for each point. Larger values of $k$ result in a smoother estimate of the density, whilst a smaller $k$ will pick up small changes in the local density. For now we choose $k = 200$.
+Next we can calculate the local density of the data ($\rho$). Here we need to choose our parameter, $k$, which defines the nearest neighbour that is used to calculate the density for each point. Larger values of $k$ result in a smoother estimate of the density, whilst a smaller $k$ will pick up small changes in the local density. For now we choose $k = 200$.
 
 ```{r}
 dens <- calculate_density(euc_dist, KNN = 200)
 head(dens, n = 20)
 ```
-If we colour code each point according its estimated density and plot the data again, we can see that we seem to get a good approximation of the density, where more dense points are purple and sparser points are green.
+If we colour code each point according its estimated density ($\rho$) and plot the data again, we can see that we seem to get a good approximation of the density, where more dense points are purple and sparser points are green.
 
 ```{r}
 cols <- colPalette(dens)
 plot(dat, ann = F, xaxt = "n", yaxt = "n", pch = 19, cex = 0.4, col = cols)
 ```
 
-Next we can estimate the minimum distance to any point of higher density.
+Next we can estimate the minimum distance to any point of higher density ($\delta$).
 
 ```{r}
 dis <- calculate_NNHD(euc_dist, dens)
 str(dis)
 ```
-The output of this function is a list of length 2. The first element is a vector of the Euclidean distance to each points nearest neighbour of higher density, and the second element contains a label of which data point is the nearest neighbour of higher density.
+The output of this function is a list of length 2. The first element is a vector of the Euclidean distance to each point's nearest neighbour of higher density ($\delta$), and the second element contains a label of which data point is the nearest neighbour of higher density.
+
+We can now plot $log(\delta)$ vs $log(\rho)$.
+
+```{r}
+plot_dp(dens, dis$dis)
+```
+
+As can be seen in the plot there is a negative correlation between $\delta$ and $\rho$. However, there are three outliers to the right of the dotted line. For these points we have a much higher $\delta$ than expected given $\rho$. This means you have to travel much further than expected to get to a point of higher density. These three points are therefore assigned as cluster centers. The number of cluster centers defines the number of clusters. So in this case, we have 3 clusters. We can find our where our cluster centers are located in our data.
+
+```{r}
+cl <- calculate_clusters(dens, dis$dis, dis$NNHD, dat)
+str(cl)
+```
+
+The output of calculate_clusters is a list of length 2. The first element is a vector of which cluster each point has been assigned to. The second element is a vector of all the cluster centers. We can now plot the data and highlight where the cluster centers are.
+
+```{r}
+plot_dat(dat, centers = cl$centers)
+```
+
+As can be seen in the plot, the cluster centers are each localised to one of the 3 clusters. We can now plot the data this time colour coding all of the points according to which cluster it has been assigned to.
+
+```{r}
+plot_dat(dat, cl = cl$clusters)
+```
+
+We have now associated every point to one of the three cluster centers. This is done by assigning a point to the same cluster as its nearest neighbour of higher density. A visual inspection of the plot indicates that the clustering algorithm has worked correctly. However, some of the points around the edge of the clusters, especially those in between the 3 clusters could be considered outliers, i.e those points which don't associate very well to any of the 3 clusters. Rodriguez and Laio provide a framework for removing these clusters.
+
+First, for each data point we look to see if its *$k^{th}$* nearest neighbour is in the same cluster as itself. If not we consider these points as outliers and remove them from the cluster. Second, for each cluster we find the outlier with the highest density and use that a minimum density threshold for that cluster. Any point in that cluster which doesn't meet the minimum density threshold is also removed as an outlier.
+
+To find the outlier we again need to choose a value for $k$. This time $k$ represents how many of a points nearest neighbours need to be in the same cluster as itself for it not to be considered an outlier. Here we have set $k$ to be 5.
+
+```{r}
+outlier_thresh <- calculate_outliers(dat, euc_dist, knn =  5, cl$clusters, dens)
+plot_dat(dat, cl = cl$clusters, outliers = outlier_thresh)
+```
+
+The outliers which have been removed from each cluster are shown as open circles.
+
+
+
+
+
 
 
