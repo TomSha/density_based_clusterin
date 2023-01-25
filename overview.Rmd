@@ -56,6 +56,13 @@ plot(dat, ann = F, xaxt = "n", yaxt = "n", pch = 19, cex = 0.4)
 
 We can see that the data appears to come from 3 clusters. Our aim is to associate each data point to one of the 3 clusters.
 
+First we calculate the Euclidean distance between all points
+
+```{r}
+euc_dist <- as.matrix(dist(dat, upper = T))
+```
+
+
 Next we can calculate the local density of the data. Here we need to choose our parameter, $k$, which defines which nearest neighbour is used to calculate the density for each point. Larger values of $k$ result in a smoother estimate of the density, whilst a smaller $k$ will pick up small changes in the local density. For now we choose $k = 200$.
 
 ```{r}
@@ -75,6 +82,6 @@ Next we can estimate the minimum distance to any point of higher density.
 dis <- calculate_NNHD(euc_dist, dens)
 str(dis)
 ```
-The output of this function is a list of length 2. The first element contains the Euclidean distance to the nearest neighbour of higher density, and the second element contains a label of which data point is the nearest neighbour of higher density.
+The output of this function is a list of length 2. The first element is a vector of the Euclidean distance to each points nearest neighbour of higher density, and the second element contains a label of which data point is the nearest neighbour of higher density.
 
 
