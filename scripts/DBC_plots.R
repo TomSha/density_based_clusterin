@@ -1,5 +1,5 @@
 
-plot_dp <- function(dens, dis, threshold = NULL, Dim = 2){
+plot_dp <- function(dens, dis, threshold = 0, Dim = 2){
 
 	plot(log(dis)
 	     ,log(dens)

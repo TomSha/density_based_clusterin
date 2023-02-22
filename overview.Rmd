@@ -9,7 +9,7 @@ output:
 ---
 
 ## Outline of the algorithm
-The outline of the clustering procedure follows the algorithm set out in Rodriguez \& Laio (2014). The basic assumption is that clusters of data points in *n*-dimensional space can be thought of as approximating some arbitrary density distribution. Clusters are defined as areas of high density, and cluster centres are defined as regions of local density maxima, which are sufficiently separate from other maxima.
+The outline of the clustering procedure follows the algorithm set out in Rodriguez \& Laio (2014). The basic assumption is that data points in *n*-dimensional space can be thought of as approximating some arbitrary density distribution. Clusters are defined as areas of high density, and cluster centres are defined as regions of local density maxima, which are sufficiently separate from other maxima.
 
 
 <center>
@@ -31,7 +31,7 @@ In a slight variation from Rodriguez and Laio (2014), the local density is appro
     \rho_{i}\propto{\frac{1}{[dKNN]^n}}
 \end{equation}
 
-where $n$ is equal to the dimensionality of the data. This method of estimating the density can therefore be thought of as asking what is the minimum volume necessary to encapsulate the \textit{k} nearest neighbours of data point \textit{i}.
+where $n$ is equal to the dimensionality of the data. This method of estimating the density can therefore be thought of as asking what is the minimum volume necessary to encapsulate the *k* nearest neighbours of data point *i*.
 
 \noindent{}$\delta_{i}$ is calculated as the minimum distance to any point of higher density, $j$:
 
@@ -43,12 +43,13 @@ The point with highest density is given $\rho_{i} = \max_{j}(d_{ij})$, that is t
 
 ## Implementation
 
-We can run the algorithm on some surrogate data to see how it works.
+We can run the algorithm on some surrogate 2d data which allows an easier visualisation of how the method works.
 
 First we load the data and plot it.
 
 ```{r}
 source("scripts/DBC_functions.R")
+source("scripts/DBC_plots.R")
 dat <- read.table("data/data.dat")
 plot_dat(dat)
 ```
@@ -62,7 +63,7 @@ euc_dist <- as.matrix(dist(dat, upper = T))
 ```
 
 
-Next we can calculate the local density of the data ($\rho$). Here we need to choose our parameter, $k$, which defines the nearest neighbour that is used to calculate the density for each point. Larger values of $k$ result in a smoother estimate of the density, whilst a smaller $k$ will pick up small changes in the local density. For now we choose $k = 200$.
+Next we can calculate the local density of the data ($\rho$). Here we need to choose our parameter, $k$, which defines which nearest neighbour is used to calculate the density for each point. Larger values of $k$ result in a smoother estimate of the density, whilst a smaller $k$ will pick up small changes in the local density. For now we choose $k = 200$.
 
 ```{r}
 dens <- calculate_density(euc_dist, KNN = 200)
